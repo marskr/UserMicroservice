@@ -322,3 +322,11 @@ ASALocalRun/
 
 # NVidia Nsight GPU debugger configuration file
 *.nvuser
+
+*.csproj
+*appsettings.json
+*Dockerfile
+*Development.json
+*UsersMicroservice.sln
+*.dcproj
+*.yml
