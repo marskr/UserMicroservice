@@ -11,12 +11,15 @@ namespace UsersMicroservice.Models
         public int Id { get; set; }
 
         [Required]
-        //[Key]
-        public string Username { get; set; }
+        public string Email { get; set; }
 
         [Required]
         //[Key]
-        public string Email { get; set; }
+        public string Name { get; set; }
+
+        [Required]
+        //[Key]
+        public string Surname { get; set; }
 
         [Required]
         public string Password { get; set; }
@@ -27,8 +30,7 @@ namespace UsersMicroservice.Models
 
         public DateTime? AuthTokenExpiration { get; set; }
 
-        public int PermissionId { get; set; }
         [ForeignKey("PermissionId")]
-        public Permissions Permissions { get; set; }
+        public int PermissionId { get; set; }
     }
 }
