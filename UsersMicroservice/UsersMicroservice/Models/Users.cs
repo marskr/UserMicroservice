@@ -14,11 +14,9 @@ namespace UsersMicroservice.Models
         public string Email { get; set; }
 
         [Required]
-        //[Key]
         public string Name { get; set; }
 
         [Required]
-        //[Key]
         public string Surname { get; set; }
 
         [Required]

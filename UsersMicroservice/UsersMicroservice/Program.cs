@@ -11,16 +11,14 @@ namespace UsersMicroservice
     {
         public static void Main(string[] args)
         {
-            //BuildWebHost(args).Run(); 
+            IWebHost host = BuildWebHost(args);  
 
-            var host = BuildWebHost(args);  
-
-            using (var scope = host.Services.CreateScope())
+            using (IServiceScope scope = host.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
+                IServiceProvider services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<AppDbContext>();
+                    AppDbContext context = services.GetRequiredService<AppDbContext>();
                 }
                 catch (Exception ex)
                 {

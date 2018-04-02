@@ -21,9 +21,7 @@ namespace UsersMicroservice
         public void ConfigureServices(IServiceCollection services)
         {
             var connStr = Configuration.GetConnectionString("DefaultConnection");
-            //System.Console.WriteLine("The connection string is: {0}\n",connStr);
-            services.AddDbContext<AppDbContext>(options => 
-                                                options.UseSqlServer(connStr));
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connStr));
 
             services.AddMvc();
 

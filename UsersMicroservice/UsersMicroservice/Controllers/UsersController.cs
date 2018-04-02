@@ -34,6 +34,7 @@ namespace UsersMicroservice.Controllers
         {
             // dopisz ID ktore ma zostac dodane automatycznie (max id + 1), losowanie soli, tokenow
             if (newUser == null) { return BadRequest(); }
+            if (_query.APIGet(newUser.Email, _context) != null) { return NotFound(); }
             try
             {
                 _query.APIPost(newUser, _context);
@@ -96,16 +97,6 @@ namespace UsersMicroservice.Controllers
         //    if (topUsers == null) { return NotFound(); }
 
         //    return new ObjectResult(topUsers);
-        //}
-
-        //// GET api/users
-        //[HttpGet]
-        //public IActionResult Get()
-        //{
-        //    DbSet<Users> allUsers =_context.Users;
-        //    if (allUsers == null) { return NotFound(); }
-
-        //    return new ObjectResult(allUsers);
         //}
     }
 }
