@@ -6,11 +6,12 @@ namespace UsersMicroservice.Models
 {
     public class Users
     {
-        [Key]
+        //[Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        //public int Id { get; set; }
 
-        [Required]
+        //[Required]
+        [Key]
         public string Email { get; set; }
 
         [Required]

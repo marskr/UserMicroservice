@@ -19,7 +19,6 @@ namespace UsersMicroservice.Queries
 
         public override void APIPost(Users newUser, AppDbContext context)
         {
-            newUser.Id = context.Users.Max(t => t.Id) + 10;
             newUser.Password = _krypton.EncryptStringAES(newUser.Password, newUser.Salt); 
             context.Users.Add(newUser);
             context.SaveChanges();
@@ -27,6 +26,7 @@ namespace UsersMicroservice.Queries
 
         public override void APIPut(Users updatedUser, Users newUser, AppDbContext context)
         {
+            //updatedUser.Email = newUser.Email;
             updatedUser.Name = newUser.Name;
             updatedUser.Surname = newUser.Surname;
             updatedUser.Password = _krypton.EncryptStringAES(newUser.Password, updatedUser.Salt); 

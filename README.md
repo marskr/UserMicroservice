@@ -11,7 +11,6 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **URL Params :** Required: email = [string]   
 **Data Params :**  
 {  
-  "id": [int],  
   "email": [string],   
   "name": [string],  
   "surname": [string], 
@@ -31,8 +30,7 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **Method :** POST  
 **URL Params :**  NONE  
 **Data Params :**  
-{    
-  "id": [int],  
+{      
   "email": [string],  
   "name": [string],  
   "surname": [string],  
@@ -55,7 +53,6 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **URL Params :** Required: email = [string]   
 **Data Params :**   
 {  
-  "id": [int],  
   "email": [string],  
   "name": [string],  
   "surname": [string],  
