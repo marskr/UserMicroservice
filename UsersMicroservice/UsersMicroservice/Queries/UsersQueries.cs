@@ -13,13 +13,13 @@ namespace UsersMicroservice.Queries
         {
             Users getQuery = context.Users.FirstOrDefault(t => t.Email == email_s);
             if (getQuery == null) { return getQuery; }
-            getQuery.Password = _krypton.DecryptStringAES(getQuery.Password, getQuery.Salt);
+            //getQuery.HashPassword = _krypton.DecryptStringAES(getQuery.HashPassword, getQuery.Salt);
             return getQuery;
         }
 
         public override void APIPost(Users newUser, AppDbContext context)
         {
-            newUser.Password = _krypton.EncryptStringAES(newUser.Password, newUser.Salt); 
+            newUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, newUser.Salt); 
             context.Users.Add(newUser);
             context.SaveChanges();
         }
@@ -29,7 +29,8 @@ namespace UsersMicroservice.Queries
             //updatedUser.Email = newUser.Email;
             updatedUser.Name = newUser.Name;
             updatedUser.Surname = newUser.Surname;
-            updatedUser.Password = _krypton.EncryptStringAES(newUser.Password, updatedUser.Salt); 
+            updatedUser.PhoneNumber = newUser.PhoneNumber;
+            updatedUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, updatedUser.Salt); 
             context.SaveChanges();
         }
 

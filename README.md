@@ -11,15 +11,18 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **URL Params :** Required: email = [string]   
 **Data Params :**  
 {  
-  "email": [string],   
-  "name": [string],  
-  "surname": [string], 
-  "password": [string],  
-  "salt": [string],  
-  "authToken": [string],   
-  "authTokenExpiration": [DateTime],  
-  "permissionId": [int]  
-}  
+  "Email": [String],   
+  "Name": [String],  
+  "Surname": [String],   
+  "PhoneNumber": [Int],  
+  "HashPassword": [String],  
+  "UserAccountStatus": [String],  
+  "AccountStatusChangeDate": [DateTime],  
+  "Salt": [String],  
+  "AuthToken": [String],   
+  "AuthTokenExpiration": [DateTime],  
+  "PermissionId": [Int]  
+}      
 **Response Codes :** Success (200 OK), Not Found (404)  
 
 
@@ -30,16 +33,19 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **Method :** POST  
 **URL Params :**  NONE  
 **Data Params :**  
-{      
-  "email": [string],  
-  "name": [string],  
-  "surname": [string],  
-  "password": [string],  
-  "salt": [string],  
-  "authToken": [string],  
-  "authTokenExpiration": [DateTime],  
-  "permissionId": [int]  
-}  
+{  
+  "Email": [String],   
+  "Name": [String],  
+  "Surname": [String],   
+  "PhoneNumber": [Int],  
+  "HashPassword": [String],  
+  "UserAccountStatus": [String],  
+  "AccountStatusChangeDate": [DateTime],  
+  "Salt": [String],  
+  "AuthToken": [String],   
+  "AuthTokenExpiration": [DateTime],  
+  "PermissionId": [Int]  
+} 
 **Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)  
 **Annotation :** the error 404 will be returned in case of EXISTANCE of user with provided new email!!!  
 **Annotation :** Id will be provided automatically by application!  
@@ -53,16 +59,20 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **URL Params :** Required: email = [string]   
 **Data Params :**   
 {  
-  "email": [string],  
-  "name": [string],  
-  "surname": [string],  
-  "password": [string],  
-  "salt": [string],  
-  "authToken": [string],  
-  "authTokenExpiration": [DateTime],  
-  "permissionId": [int]  
-}  
+  "Email": [String],   
+  "Name": [String],  
+  "Surname": [String],   
+  "PhoneNumber": [Int],  
+  "HashPassword": [String],  
+  "UserAccountStatus": [String],  
+  "AccountStatusChangeDate": [DateTime],  
+  "Salt": [String],  
+  "AuthToken": [String],   
+  "AuthTokenExpiration": [DateTime],  
+  "PermissionId": [Int]  
+}      
 **Response Codes :** Success (200 OK), Not Found (404)  
+**Annotation :** You can update Name, Surname, PhoneNumber & Password!  
 
 
 # Delete user

@@ -21,7 +21,15 @@ namespace UsersMicroservice.Models
         public string Surname { get; set; }
 
         [Required]
-        public string Password { get; set; }
+        public int PhoneNumber { get; set; }
+
+        [Required]
+        public string HashPassword { get; set; }
+
+        [Required]
+        public string UserAccountStatus { get; set; }
+
+        public DateTime? AccountStatusChangeDate {get; set;}
         
         public string Salt { get; set; }
 
