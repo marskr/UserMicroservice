@@ -1,24 +1,27 @@
 ﻿using System.Linq;
 using UsersMicroservice.Data;
 using UsersMicroservice.Encryption;
+using UsersMicroservice.JWT;
 using UsersMicroservice.Models;
 
 namespace UsersMicroservice.Queries
 {
-    public class UserQueriesFactory : AbstractQueriesFactory<Users, AppDbContext>
+    public class UserCRUDQueriesFactory : AbstractQueriesFactory<Users, AppDbContext>
     {
         EncryptionManager _krypton = new EncryptionManager();
+        JWTManager _jwt = new JWTManager();
 
         public override Users APIGet(string email_s, AppDbContext context)
         {
-            Users getQuery = context.Users.FirstOrDefault(t => t.Email == email_s);
-            if (getQuery == null) { return getQuery; }
-            //getQuery.HashPassword = _krypton.DecryptStringAES(getQuery.HashPassword, getQuery.Salt);
-            return getQuery;
+            return context.Users.FirstOrDefault(t => t.Email == email_s);
         }
 
         public override void APIPost(Users newUser, AppDbContext context)
         {
+            // create token before hashing password
+            newUser.AuthToken = _jwt.ReturnJWT(newUser.Email, newUser.HashPassword);
+            
+            // encrypt password 
             newUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, newUser.Salt); 
             context.Users.Add(newUser);
             context.SaveChanges();
@@ -30,6 +33,7 @@ namespace UsersMicroservice.Queries
             updatedUser.Name = newUser.Name;
             updatedUser.Surname = newUser.Surname;
             updatedUser.PhoneNumber = newUser.PhoneNumber;
+            updatedUser.AuthToken = _jwt.ReturnJWT(updatedUser.Email, updatedUser.HashPassword);
             updatedUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, updatedUser.Salt); 
             context.SaveChanges();
         }
@@ -38,6 +42,11 @@ namespace UsersMicroservice.Queries
         {
             context.Users.Remove(deletedUser);
             context.SaveChanges();
+        }
+
+        public override string APICreateToken(string email_s, string password_s)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

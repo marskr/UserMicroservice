@@ -14,25 +14,23 @@ namespace UsersMicroservice.Controllers
         public UsersController(AppDbContext context)
         {
             _context = context;
-            _query = new UserQueriesFactory();
+            _query = new UserCRUDQueriesFactory();
         }
 
-        // GET api/users/{email_s}
+        // GET api/Users/{email}
         [HttpGet("{email_s}", Name = "GetSingleUser")]
         public IActionResult Get(string email_s)
         {
             Users specifiedUser = _query.APIGet(email_s, _context);
-
             if (specifiedUser == null) { return NotFound(); }
 
             return new ObjectResult(specifiedUser);
         }
 
-        // POST api/users/
-        [HttpPost]
+        // POST api/Users/
+        [HttpPost(Name = "CreateUser")]
         public IActionResult Post([FromBody]Users newUser)
         {
-            // dopisz ID ktore ma zostac dodane automatycznie (max id + 1), losowanie soli, tokenow
             if (newUser == null) { return BadRequest(); }
             if (_query.APIGet(newUser.Email, _context) != null) { return NotFound(); }
             try
@@ -47,8 +45,8 @@ namespace UsersMicroservice.Controllers
             return CreatedAtRoute("GetSingleUser", new { email_s = newUser.Email }, newUser);
         }
 
-        // PUT api/users/5
-        [HttpPut("{email_s}")]
+        // PUT api/Users/{email}
+        [HttpPut("{email_s}", Name = "UpdateUser")]
         public IActionResult Put(string email_s, [FromBody]Users newUser)
         {
             try
@@ -57,7 +55,7 @@ namespace UsersMicroservice.Controllers
                 if (updatedUser == null) { return NotFound(); }
                 else
                 {
-                    // in this moment we assume that id, email, salt, authtoken, authtokenexpiration & permissionid 
+                    // in this moment we assume that email, permissionid 
                     // is UNALTERABLE!!
                     _query.APIPut(updatedUser, newUser, _context);
                 }
@@ -71,7 +69,7 @@ namespace UsersMicroservice.Controllers
         }
 
         // DELETE api/users/{email}
-        [HttpDelete("{email_s}")]
+        [HttpDelete("{email_s}", Name = "DeleteUser")]
         public IActionResult Delete(string email_s)
         {
             try
@@ -88,15 +86,5 @@ namespace UsersMicroservice.Controllers
             
             return new NoContentResult();
         }
-
-        //// GET api/users/top/{number_i}
-        //[HttpGet("top/{number_i}")]
-        //public IActionResult GetTop(int number_i)
-        //{
-        //    IOrderedQueryable topUsers = _context.Users.Take(number_i).OrderBy(t => t.Email);
-        //    if (topUsers == null) { return NotFound(); }
-
-        //    return new ObjectResult(topUsers);
-        //}
     }
 }
