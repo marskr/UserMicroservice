@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using UsersMicroservice.Logs;
 
 namespace UsersMicroservice.Encryption
 {
@@ -8,43 +9,43 @@ namespace UsersMicroservice.Encryption
     {
         private static byte[] _salt = { 0xE1, 0xF5, 0x31, 0x36, 0xE7, 0x60, 0xC1, 0x64 };
 
-        public string EncryptStringAES(string s_plainText, string s_sharedSecret)
+        public string EncryptStringAES(string plainText_s, string sharedSecret_s)
         {
-            if (string.IsNullOrEmpty(s_plainText))
-                throw new ArgumentNullException("plainText");
-            if (string.IsNullOrEmpty(s_sharedSecret))
-                throw new ArgumentNullException("sharedSecret");
+            if (string.IsNullOrEmpty(plainText_s))
+                throw new ArgumentNullException("The text to encryption is null (plainText_s)!");
+            if (string.IsNullOrEmpty(sharedSecret_s))
+                throw new ArgumentNullException("The text to encryption is null (sharedSecret_s)!");
 
-            string s_outStr = null;                       // Encrypted string to return
+            string outStr_s = null;                       // Encrypted string to return
             RijndaelManaged aesAlg = null;              // RijndaelManaged object used to encrypt the data.
 
             try
             {
                 // key generate
-                Rfc2898DeriveBytes rfc_key = new Rfc2898DeriveBytes(s_sharedSecret, _salt);
+                Rfc2898DeriveBytes rfc_key = new Rfc2898DeriveBytes(sharedSecret_s, _salt);
 
                 // creation of RijndaelManaged object
                 aesAlg = new RijndaelManaged();
                 aesAlg.Key = rfc_key.GetBytes(aesAlg.KeySize / 8);
 
                 // Create a decryptor to perform the stream transform.
-                ICryptoTransform ict_encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+                ICryptoTransform encryptor_ict = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
                 // Create the streams used for encryption.
-                using (MemoryStream ms_Encrypt = new MemoryStream())
+                using (MemoryStream encrypt_ms = new MemoryStream())
                 {
                     // prepend the IV
-                    ms_Encrypt.Write(BitConverter.GetBytes(aesAlg.IV.Length), 0, sizeof(int));
-                    ms_Encrypt.Write(aesAlg.IV, 0, aesAlg.IV.Length);
-                    using (CryptoStream cs_Encrypt = new CryptoStream(ms_Encrypt, ict_encryptor, CryptoStreamMode.Write))
+                    encrypt_ms.Write(BitConverter.GetBytes(aesAlg.IV.Length), 0, sizeof(int));
+                    encrypt_ms.Write(aesAlg.IV, 0, aesAlg.IV.Length);
+                    using (CryptoStream encrypt_cs = new CryptoStream(encrypt_ms, encryptor_ict, CryptoStreamMode.Write))
                     {
-                        using (StreamWriter swEncrypt = new StreamWriter(cs_Encrypt))
+                        using (StreamWriter encrypt_sw = new StreamWriter(encrypt_cs))
                         {
                             //Write all data to the stream.
-                            swEncrypt.Write(s_plainText);
+                            encrypt_sw.Write(plainText_s);
                         }
                     }
-                    s_outStr = Convert.ToBase64String(ms_Encrypt.ToArray());
+                    outStr_s = Convert.ToBase64String(encrypt_ms.ToArray());
                 }
             }
             finally
@@ -54,16 +55,17 @@ namespace UsersMicroservice.Encryption
                     aesAlg.Clear();
             }
 
+            ErrInfLogger.LockInstance.InfoLog("Encryption finished.");
             // Return the encrypted bytes from the memory stream.
-            return s_outStr;
+            return outStr_s;
         }
 
-        public string DecryptStringAES(string s_cipherText, string s_sharedSecret)
+        public string DecryptStringAES(string cipherText_s, string sharedSecret_s)
         {
-            if (string.IsNullOrEmpty(s_cipherText))
-                throw new ArgumentNullException("cipherText");
-            if (string.IsNullOrEmpty(s_sharedSecret))
-                throw new ArgumentNullException("sharedSecret");
+            if (string.IsNullOrEmpty(cipherText_s))
+                throw new ArgumentNullException("the text to encryption is null (cipherText_s)!");
+            if (string.IsNullOrEmpty(sharedSecret_s))
+                throw new ArgumentNullException("The text to encryption is null (sharedSecret_s)!");
 
             // Declare the RijndaelManaged object
             // used to decrypt the data.
@@ -71,15 +73,15 @@ namespace UsersMicroservice.Encryption
 
             // Declare the string used to hold
             // the decrypted text.
-            string s_plaintext = null;
+            string plaintext_s = null;
 
             try
             {
                 // generate the key from the shared secret and the salt
-                Rfc2898DeriveBytes rfc_key = new Rfc2898DeriveBytes(s_sharedSecret, _salt);
+                Rfc2898DeriveBytes rfc_key = new Rfc2898DeriveBytes(sharedSecret_s, _salt);
 
                 // Create the streams used for decryption.                
-                byte[] bytes = Convert.FromBase64String(s_cipherText);
+                byte[] bytes = Convert.FromBase64String(cipherText_s);
                 using (MemoryStream ms_Decrypt = new MemoryStream(bytes))
                 {
                     // Create a RijndaelManaged object
@@ -96,7 +98,7 @@ namespace UsersMicroservice.Encryption
 
                             // Read the decrypted bytes from the decrypting stream
                             // and place them in a string.
-                            s_plaintext = srDecrypt.ReadToEnd();
+                            plaintext_s = srDecrypt.ReadToEnd();
                     }
                 }
             }
@@ -107,19 +109,20 @@ namespace UsersMicroservice.Encryption
                     aesAlg.Clear();
             }
 
-            return s_plaintext;
+            ErrInfLogger.LockInstance.InfoLog("Decryption finished.");
+            return plaintext_s;
         }
 
-        private static byte[] ReadByteArray(Stream s_stream)
+        private static byte[] ReadByteArray(Stream stream)
         {
             byte[] by_rawLength = new byte[sizeof(int)];
-            if (s_stream.Read(by_rawLength, 0, by_rawLength.Length) != by_rawLength.Length)
+            if (stream.Read(by_rawLength, 0, by_rawLength.Length) != by_rawLength.Length)
             {
                 throw new SystemException("Stream did not contain properly formatted byte array");
             }
 
             byte[] by_buffer = new byte[BitConverter.ToInt32(by_rawLength, 0)];
-            if (s_stream.Read(by_buffer, 0, by_buffer.Length) != by_buffer.Length)
+            if (stream.Read(by_buffer, 0, by_buffer.Length) != by_buffer.Length)
             {
                 throw new SystemException("Did not read byte array properly");
             }

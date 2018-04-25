@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using UsersMicroservice.Data;
+using UsersMicroservice.Logs;
 
 namespace UsersMicroservice
 {
@@ -24,9 +25,9 @@ namespace UsersMicroservice
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred while seeding the database.");
+                    ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
                 }
             }
-
             host.Run();
         }
 

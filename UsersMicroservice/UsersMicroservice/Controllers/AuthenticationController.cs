@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using UsersMicroservice.Data;
+using UsersMicroservice.Logs;
 using UsersMicroservice.Models;
 using UsersMicroservice.Queries;
 
@@ -30,8 +31,9 @@ namespace UsersMicroservice.Controllers
 
                 return new ObjectResult(true);
             }
-            catch
+            catch (Exception ex)
             {
+                ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
                 return BadRequest();
             }
         }
@@ -58,11 +60,11 @@ namespace UsersMicroservice.Controllers
                     _query.APIPut(updatedUser, null, _context);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
                 return BadRequest();
             }
-
             return new ObjectResult(true);
         }
     }

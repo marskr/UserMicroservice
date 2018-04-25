@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using UsersMicroservice.Data;
+using UsersMicroservice.Logs;
 using UsersMicroservice.Models;
 using UsersMicroservice.Queries;
 
@@ -37,8 +39,9 @@ namespace UsersMicroservice.Controllers
             {
                 _query.APIPost(newUser, _context);
             }
-            catch
+            catch (Exception ex)
             {
+                ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
                 return BadRequest();
             }
             
@@ -60,8 +63,9 @@ namespace UsersMicroservice.Controllers
                     _query.APIPut(updatedUser, newUser, _context);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
                 return BadRequest();
             }
 
@@ -79,8 +83,9 @@ namespace UsersMicroservice.Controllers
 
                 _query.APIDelete(deletedUser, _context);
             }
-            catch
+            catch (Exception ex)
             {
+                ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
                 return BadRequest();
             }
             
