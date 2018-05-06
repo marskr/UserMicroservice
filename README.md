@@ -35,17 +35,17 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **URL Params :**  NONE  
 **Data Params :**  
 {  
-  "Email": [String],   
-  "Name": [String],  
-  "Surname": [String],   
-  "PhoneNumber": [Int],  
-  "HashPassword": [String],  
-  "UserAccountStatus": [String],  
-  "AccountStatusChangeDate": [DateTime],  
-  "Salt": [String],  
-  "AuthToken": [String],   
-  "AuthTokenExpiration": [DateTime],  
-  "PermissionId": [Int]  
+  "Email": [String] **Required Unique**,   
+  "Name": [String] **Required**,  
+  "Surname": [String] **Required**,   
+  "PhoneNumber": [Int] **Required**,  
+  "HashPassword": [String] **Required**,  
+  "UserAccountStatus": [String] **Required**,  
+  "AccountStatusChangeDate": [DateTime] **Required**,  
+  "Salt": [String] **Required**,  
+  "AuthToken": [String] **Non-required**,   
+  "AuthTokenExpiration": [DateTime] **Non-required**,  
+  "PermissionId": [Int]  **Required**   
 }   
 **Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)  
 **Annotation :** the error 404 will be returned in case of EXISTANCE of user with provided new email!!!  
@@ -60,20 +60,20 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **URL Params :** Required: email = [string]   
 **Data Params :**   
 {  
-  "Email": [String],   
-  "Name": [String],  
-  "Surname": [String],   
-  "PhoneNumber": [Int],  
-  "HashPassword": [String],  
-  "UserAccountStatus": [String],  
-  "AccountStatusChangeDate": [DateTime],  
-  "Salt": [String],  
-  "AuthToken": [String],   
-  "AuthTokenExpiration": [DateTime],  
-  "PermissionId": [Int]  
+  "Email": [String] **Non-required**,   
+  "Name": [String] **Required**,  
+  "Surname": [String] **Required**,   
+  "PhoneNumber": [Int] **Required**,  
+  "HashPassword": [String] **Required**,  
+  "UserAccountStatus": [String] **Non-required**,  
+  "AccountStatusChangeDate": [DateTime] **Non-required**,  
+  "Salt": [String] **Non-required**,  
+  "AuthToken": [String] **Non-required**,   
+  "AuthTokenExpiration": [DateTime] **Non-required**,  
+  "PermissionId": [Int] **Non-required**  
 }      
 **Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)  
-**Annotation :** You can update Name, Surname, PhoneNumber & Password! 
+**Annotation :** You can update Name, Surname, PhoneNumber & Password!  
 **Annotation :** the error 400 will be returned in case of exception!  
 
 
@@ -84,7 +84,7 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **Method :** DELETE  
 **URL Params :** Required: email = [string]   
 **Data Params :** NONE  
-**Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)
+**Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)  
 **Annotation :** the error 400 will be returned in case of exception!  
 
 
@@ -92,7 +92,7 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 
 ### Check if authorized 
 
-**Title :** Check if provided token is valid (and so email & password).  
+**Title :** Check if provided token is valid.  
 **URL :** /api/Authentication/:token  
 **Method :** GET  
 **URL Params :** Required: token = [string]   
@@ -100,27 +100,19 @@ Technology: ASP .NET Core API with basic CRUD operations for users and admins.
 **Response Body :** TRUE (if token is valid) or FALSE (if not)  
 **Response Codes :** Success (200 OK), Not Found (404)  
 
-### Create token
+### Authorization (create token)
 
-**Title :** Create a token using provided email & password.  
+**Title :** Create a token using provided email & password. Token value will be returned as result.   
 **URL :** /api/Authentication/:email/:password  
 **Method :** POST  
 **URL Params :** Required: email = [string] and password = [string]  
 **Data Params :**  NONE  
 **Response Body :** string containing JWF token  
-**Response Codes :** Success (200 OK), Bad Request (400)  
-**Annotation :** the error 400 will be returned in case of NULL value of password or email! 
+**Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)  
+**Annotation :** the error 400 will be returned in case of NULL value of password or email!  
+**Annotation :** the error 404 will be returned in case of WRONG value of password or email! 
 
-### Update expiration date
 
-**Title :** If token is proper update expiration date (now + 1 hour).  
-**URL :** /api/Authentication/:token  
-**Method :** PUT  
-**URL Params :** Required: token = [string]   
-**Data Params :**  NONE  
-**Response Body :** TRUE (if date was updated) or FALSE (if not)  
-**Response Codes :** Success (200 OK), Bad Request (400)  
-**Annotation :** the error 400 will be returned in case of exception!
 
 
   

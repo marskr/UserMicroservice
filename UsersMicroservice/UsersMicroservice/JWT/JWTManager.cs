@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using UsersMicroservice.Logs;
@@ -10,7 +11,7 @@ namespace UsersMicroservice.JWT
         public readonly string _key = "401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429090fb3" +
                                      "37591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1";
         
-        public string ReturnJWT(string email_s, string password_s)
+        public string ReturnJWT(string email_s, DateTime expirationDate)
         {
             // Create Security key  using private key above:
             // not that latest version of JWT using Microsoft namespace instead of System
@@ -27,7 +28,7 @@ namespace UsersMicroservice.JWT
             JwtPayload payload = new JwtPayload
             {
                 { "userName", email_s},
-                { "password", password_s},
+                { "expirationDate", expirationDate},
             };
             
             JwtSecurityToken secToken = new JwtSecurityToken(header, payload);

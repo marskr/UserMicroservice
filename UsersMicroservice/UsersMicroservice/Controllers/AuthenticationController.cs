@@ -27,8 +27,10 @@ namespace UsersMicroservice.Controllers
             {
                 Users specifiedUser = _query.APIGet(token_s, _context);
 
-                if (specifiedUser == null || specifiedUser.AuthTokenExpiration < DateTime.Now) { return new ObjectResult(false); }
-
+                if (specifiedUser == null || specifiedUser.AuthTokenExpiration < DateTime.Now)
+                {
+                    return new ObjectResult(false);
+                }
                 return new ObjectResult(true);
             }
             catch (Exception ex)
@@ -44,28 +46,10 @@ namespace UsersMicroservice.Controllers
         {
             if (email_s == null || password_s == null) return BadRequest();
 
-            return new ObjectResult(_query.APICreateToken(email_s, password_s));
-        }
+            string token_s = _query.APICreateToken(email_s, password_s, _context);
 
-        // PUT api/Authentication/{token}
-        [HttpPut("{token_s}", Name = "UpdateAuthExpirationDate")]
-        public IActionResult Put(string token_s)
-        {
-            try
-            {
-                Users updatedUser = _query.APIGet(token_s, _context);
-                if (updatedUser == null) { return new ObjectResult(false); }
-                else
-                {
-                    _query.APIPut(updatedUser, null, _context);
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
-                return BadRequest();
-            }
-            return new ObjectResult(true);
+            if (token_s == null) return NotFound();
+            return new ObjectResult(token_s);
         }
     }
 }

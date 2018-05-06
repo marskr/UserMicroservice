@@ -23,7 +23,8 @@ namespace UsersMicroservice.Queries
         {
             ErrInfLogger.LockInstance.InfoLog("APIPost launched." + _logInfo);
             // create token before hashing password!
-            newUser.AuthToken = _jwt.ReturnJWT(newUser.Email, newUser.HashPassword);
+            newUser.AuthToken = _jwt.ReturnJWT(newUser.Email, System.DateTime.Now);
+            newUser.AuthTokenExpiration = System.DateTime.Now;
             
             // encrypt password 
             newUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, newUser.Salt); 
@@ -34,11 +35,9 @@ namespace UsersMicroservice.Queries
         public override void APIPut(Users updatedUser, Users newUser, AppDbContext context)
         {
             ErrInfLogger.LockInstance.InfoLog("APIPut launched." + _logInfo);
-            //updatedUser.Email = newUser.Email;
             updatedUser.Name = newUser.Name;
             updatedUser.Surname = newUser.Surname;
             updatedUser.PhoneNumber = newUser.PhoneNumber;
-            updatedUser.AuthToken = _jwt.ReturnJWT(updatedUser.Email, updatedUser.HashPassword); 
             updatedUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, updatedUser.Salt); 
             context.SaveChanges();
         }
@@ -50,7 +49,7 @@ namespace UsersMicroservice.Queries
             context.SaveChanges();
         }
 
-        public override string APICreateToken(string email_s, string password_s)
+        public override string APICreateToken(string email_s, string password_s, AppDbContext context)
         {
             throw new System.NotImplementedException();
         }

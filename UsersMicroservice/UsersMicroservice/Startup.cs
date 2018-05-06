@@ -22,14 +22,14 @@ namespace UsersMicroservice
         {
             var connStr = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connStr));
-
-            services.AddMvc();
-
+            
             // Register the Swagger generator, defining one or more Swagger documents 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "MSUser", Version = "v1" });
             });
+
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,7 +48,10 @@ namespace UsersMicroservice
             app.UseStaticFiles();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.  
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.PreSerializeFilters.Add((swagger, httpReq) => swagger.Host = httpReq.Host.Value);
+            });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.  
             app.UseSwaggerUI(c =>
