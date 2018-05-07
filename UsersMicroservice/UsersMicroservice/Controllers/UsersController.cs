@@ -58,7 +58,7 @@ namespace UsersMicroservice.Controllers
                 if (updatedUser == null) { return NotFound(); }
                 else
                 {
-                    // in this moment we assume that email, permissionid 
+                    // in this moment we assume that email, permissionid, salt
                     // is UNALTERABLE!!
                     _query.APIPut(updatedUser, newUser, _context);
                 }

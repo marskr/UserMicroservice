@@ -22,10 +22,12 @@ namespace UsersMicroservice.Queries
         public override void APIPost(Users newUser, AppDbContext context)
         {
             ErrInfLogger.LockInstance.InfoLog("APIPost launched." + _logInfo);
+            
             // create token before hashing password!
             newUser.AuthToken = _jwt.ReturnJWT(newUser.Email, System.DateTime.Now);
             newUser.AuthTokenExpiration = System.DateTime.Now;
-            
+            newUser.Salt = SaltGenerator.GenerateSalt();
+
             // encrypt password 
             newUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, newUser.Salt); 
             context.Users.Add(newUser);
