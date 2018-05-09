@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Net;
 using UsersMicroservice.Data;
 using UsersMicroservice.Logs;
 using UsersMicroservice.Models;
@@ -29,14 +30,17 @@ namespace UsersMicroservice.Controllers
 
                 if (specifiedUser == null || specifiedUser.AuthTokenExpiration < DateTime.Now)
                 {
-                    return new ObjectResult(false);
+                    return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                            String.Empty, false, 2, "Validation error", "Provided token is not valid"));
                 }
-                return new ObjectResult(true);
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                        String.Empty, true, 0, "Valid", "Provided token is valid"));
             }
             catch (Exception ex)
             {
                 ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
-                return BadRequest();
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.BadRequest,
+                                        String.Empty, false, 4, "Exception", "Application exception thrown"));
             }
         }
 
@@ -44,12 +48,28 @@ namespace UsersMicroservice.Controllers
         [HttpPost("{email_s}/{password_s}", Name = "CreateToken")]
         public IActionResult Post(string email_s, string password_s)
         {
-            if (email_s == null || password_s == null) return BadRequest();
+            try
+            {
+                if (email_s == null || password_s == null)
+                    return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(
+                                            HttpStatusCode.Unauthorized, String.Empty, false, 1, 
+                                            "Authorization Error", "Wrong login or password"));
 
-            string token_s = _query.APICreateToken(email_s, password_s, _context);
+                string token_s = _query.APICreateToken(email_s, password_s, _context);
 
-            if (token_s == null) return NotFound();
-            return new ObjectResult(token_s);
+                if (token_s == null) return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(
+                                            HttpStatusCode.Unauthorized, String.Empty, false, 1,
+                                            "Authorization Error", "Wrong login or password"));
+
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                        token_s, true, 0, "Authorized", "Password & login correct"));
+            }
+            catch (Exception ex)
+            {
+                ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.BadRequest,
+                                        String.Empty, false, 4, "Exception", "Application exception thrown"));
+            }
         }
     }
 }

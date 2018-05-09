@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
+using System.Net;
 using UsersMicroservice.Data;
 using UsersMicroservice.Logs;
 using UsersMicroservice.Models;
@@ -24,17 +26,22 @@ namespace UsersMicroservice.Controllers
         public IActionResult Get(string email_s)
         {
             Users specifiedUser = _query.APIGet(email_s, _context);
-            if (specifiedUser == null) { return NotFound(); }
-
-            return new ObjectResult(specifiedUser);
+            if (specifiedUser == null)
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                    String.Empty, false, 3, "Invalid user", "User not found in database"));
+            
+            // need to change response body for USER!!!!
+            return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                    specifiedUser.ToString(), true, 0, "Found", "User found in database"));
         }
 
         // POST api/Users/
         [HttpPost(Name = "CreateUser")]
-        public IActionResult Post([FromBody]Users newUser)
+        public IActionResult Post(/*[FromBody]*/Users newUser)
         {
-            if (newUser == null) { return BadRequest(); }
-            if (_query.APIGet(newUser.Email, _context) != null) { return NotFound(); }
+            if (_query.APIGet(newUser.Email, _context) != null)
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                        String.Empty, false, 5, "User exists", "User exists in database"));
             try
             {
                 _query.APIPost(newUser, _context);
@@ -42,20 +49,24 @@ namespace UsersMicroservice.Controllers
             catch (Exception ex)
             {
                 ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
-                return BadRequest();
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.BadRequest,
+                                        String.Empty, false, 4, "Exception", "Application exception thrown"));
             }
-            
-            return CreatedAtRoute("GetSingleUser", new { email_s = newUser.Email }, newUser);
+            return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                    String.Empty, true, 0, "Created", "User created in database"));
         }
 
         // PUT api/Users/{email}
         [HttpPut("{email_s}", Name = "UpdateUser")]
-        public IActionResult Put(string email_s, [FromBody]Users newUser)
+        public IActionResult Put(string email_s, /*[FromBody]*/Users newUser)
         {
             try
             {
                 Users updatedUser = _query.APIGet(email_s, _context);
-                if (updatedUser == null) { return NotFound(); }
+                if (updatedUser == null) { return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(
+                                                                   HttpStatusCode.OK, String.Empty, false, 3,
+                                                                   "Invalid user", "User not found in database"));
+                }
                 else
                 {
                     // in this moment we assume that email, permissionid, salt
@@ -66,10 +77,11 @@ namespace UsersMicroservice.Controllers
             catch (Exception ex)
             {
                 ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
-                return BadRequest();
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.BadRequest,
+                                        String.Empty, false, 4, "Exception", "Application exception thrown"));
             }
-
-            return CreatedAtRoute("GetSingleUser", new { email_s = newUser.Email }, newUser);
+            return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                        String.Empty, true, 0, "Updated", "User updated in database"));
         }
 
         // DELETE api/users/{email}
@@ -79,17 +91,22 @@ namespace UsersMicroservice.Controllers
             try
             {
                 Users deletedUser = _query.APIGet(email_s, _context);
-                if (deletedUser == null) { return NotFound(); }
+                if (deletedUser == null) { return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(
+                                                                   HttpStatusCode.OK, String.Empty, false, 6, 
+                                                                   "Not exists", "User not exists in database"));
+                }
 
                 _query.APIDelete(deletedUser, _context);
             }
             catch (Exception ex)
             {
                 ErrInfLogger.LockInstance.ErrorLog(ex.ToString());
-                return BadRequest();
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.BadRequest,
+                                        String.Empty, false, 4, "Exception", "Application exception thrown"));
             }
-            
-            return new NoContentResult();
+            return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK, String.Empty, 
+                                                                                   true, 0, "Deleted", 
+                                                                                   "User deleted from database"));
         }
     }
 }

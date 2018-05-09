@@ -59,6 +59,8 @@ namespace UsersMicroservice
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "MSUser");
             });
 
+            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
