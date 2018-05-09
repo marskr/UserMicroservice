@@ -38,7 +38,7 @@ This Microservice is responsible for basic Create, Read, Update & Delete operati
   "AuthTokenExpiration": [DateTime],  
   "PermissionId": [Int]  
 }      
-**Response Codes :** Success (200 OK), Not Found (404)  
+**Response Codes :** Success (200 OK) 
 
 
 ### AddUser
@@ -61,9 +61,8 @@ This Microservice is responsible for basic Create, Read, Update & Delete operati
   "AuthTokenExpiration": [DateTime] **Non-required**,  
   "PermissionId": [Int]  **Required**   
 }   
-**Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)  
-**Annotation :** the error 404 will be returned in case of EXISTANCE of user with provided new email!!!  
-**Annotation :** Id will be provided automatically by application!  
+**Response Codes :** Success (200 OK)  
+**Annotation :** Id will be updated automatically by application!  
 
 
 ### UpdateUser
@@ -86,9 +85,8 @@ This Microservice is responsible for basic Create, Read, Update & Delete operati
   "AuthTokenExpiration": [DateTime] **Non-required**,  
   "PermissionId": [Int] **Non-required**  
 }      
-**Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)  
-**Annotation :** You can update Name, Surname, PhoneNumber & Password!  
-**Annotation :** the error 400 will be returned in case of exception!  
+**Response Codes :** Success (200 OK)  
+**Annotation :** You can update Name, Surname, PhoneNumber & Password! 
 
 
 ### DeleteUser
@@ -98,8 +96,7 @@ This Microservice is responsible for basic Create, Read, Update & Delete operati
 **Method :** DELETE  
 **URL Params :** Required: email = [string]   
 **Data Params :** NONE  
-**Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)  
-**Annotation :** the error 400 will be returned in case of exception!  
+**Response Codes :** Success (200 OK)
 
 
 ## "Authentication" http methods
@@ -112,7 +109,7 @@ This Microservice is responsible for basic Create, Read, Update & Delete operati
 **URL Params :** Required: token = [string]   
 **Data Params :**  NONE  
 **Response Body :** TRUE (if token is valid) or FALSE (if not)  
-**Response Codes :** Success (200 OK), Not Found (404)  
+**Response Codes :** Success (200 OK)  
 
 ### CreateToken
 
@@ -122,9 +119,8 @@ This Microservice is responsible for basic Create, Read, Update & Delete operati
 **URL Params :** Required: email = [string] and password = [string]  
 **Data Params :**  NONE  
 **Response Body :** string containing JWF token  
-**Response Codes :** Success (200 OK), Bad Request (400), Not Found (404)  
-**Annotation :** the error 400 will be returned in case of NULL value of password or email!  
-**Annotation :** the error 404 will be returned in case of WRONG value of password or email! 
+**Response Codes :** Success (200 OK)  
+
 
 ## Short description of data used by microservice
 
@@ -162,6 +158,49 @@ _Non required. Expiration date will be generated in Authentication process. The 
 
 **PermissionId | _Integer_ | _INT_ | _YES_ :**  
 _Required. For normal user 0, for administrator 1, for application 2._  
+
+## http responses & error handling
+
+As a result no matter what happens, you should obtain the 200 status code. The real information about what is particular response is placed in response body. Response body basis is structure below:
+
+	public class Error
+    {
+        public int Code { get; set; }
+        public string Message { get; set; }
+        public string Details { get; set; }
+        public string Url { get; set; }
+    }
+    
+    public class JsonErrorResponses
+    {
+        public HttpStatusCode StatusCode { get; set; }
+        public string Result { get; set; }
+        public bool Success { get; set; }
+        public Error ErrorContainer { get; set; }
+    }
+
+**_Code_** - type of an error code. Possible error codes are:
+
+* 0 - everything is fine, action finished properly,
+* 1 - authorization error (wrong login or password),
+* 2 - validation error (provided token is not valid),
+* 3 - validation error (provided user not found in database),
+* 4 - exception error (API have threw an exception),
+* 5 - post error (user exists in database),
+* 6 - delete error (user not exists in database).
+
+**_Message_** - short information about the message,  
+**_Details_** - additional description about the message,  
+**_Url_** - the url address of additional documentation,  
+**_StatusCode_** - type of a status code. Possible status codes are:
+
+* OK (200),
+* Unauthorized (401),
+* BadRequest (400).  
+
+**_Result_** - contain result of request (in example token value),  
+**_Success_** - true if action were succesfully finished, false if not,  
+**_ErrorContainer_** - contains all fields from Error class.
 
 
 

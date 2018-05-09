@@ -17,7 +17,7 @@ namespace UsersMicroservice.Logs
         public HttpStatusCode StatusCode { get; set; }
         public string Result { get; set; }
         public bool Success { get; set; }
-        public Error ErrorContainer { get; set; }
+        public Error MessageContainer { get; set; }
     }
 
     public sealed class ResponsesContainer
@@ -35,7 +35,7 @@ namespace UsersMicroservice.Logs
                 StatusCode = response,
                 Result = result_s,
                 Success = success_b,
-                ErrorContainer = new Error
+                MessageContainer = new Error
                 {
                     Code = errorCode_i,
                     Message = errorMessage_s,
