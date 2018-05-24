@@ -28,11 +28,13 @@ namespace UsersMicroservice.Controllers
             Users specifiedUser = _query.APIGet(email_s, _context);
             if (specifiedUser == null)
                 return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
-                                    String.Empty, false, 3, "Invalid user", "User not found in database"));
-            
+                                        String.Empty, false, 3, "Invalid user", "User not found in database"));
+
+            string specifiedUser_s = JsonConvert.SerializeObject(specifiedUser, Formatting.Indented);
+
             // need to change response body for USER!!!!
             return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
-                                    specifiedUser.ToString(), true, 0, "Found", "User found in database"));
+                                    specifiedUser_s, true, 0, "Found", "User found in database"));
         }
 
         // POST api/Users/
@@ -81,7 +83,7 @@ namespace UsersMicroservice.Controllers
                                         String.Empty, false, 4, "Exception", "Application exception thrown"));
             }
             return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
-                                        String.Empty, true, 0, "Updated", "User updated in database"));
+                                    String.Empty, true, 0, "Updated", "User updated in database"));
         }
 
         // DELETE api/users/{email}

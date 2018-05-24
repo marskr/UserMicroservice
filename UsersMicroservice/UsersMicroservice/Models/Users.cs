@@ -6,11 +6,7 @@ namespace UsersMicroservice.Models
 {
     public class Users
     {
-        //[Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        //public int Id { get; set; }
-
-        //[Required]
+        [Required]// GENERUJE BLAD!!!
         [Key]
         public string Email { get; set; }
 
@@ -36,6 +32,10 @@ namespace UsersMicroservice.Models
         public string AuthToken { get; set; }
 
         public DateTime? AuthTokenExpiration { get; set; }
+
+        //[Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int? Id { get; set; }
 
         [ForeignKey("PermissionId")]
         public int PermissionId { get; set; }

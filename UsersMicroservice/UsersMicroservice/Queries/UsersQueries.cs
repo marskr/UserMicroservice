@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
+using System.Linq;
 using UsersMicroservice.Data;
 using UsersMicroservice.Encryption;
 using UsersMicroservice.JWT;
@@ -23,8 +25,19 @@ namespace UsersMicroservice.Queries
         {
             ErrInfLogger.LockInstance.InfoLog("APIPost launched." + _logInfo);
             
-            // create token before hashing password!
-            newUser.AuthToken = _jwt.ReturnJWT(newUser.Email, System.DateTime.Now);
+            SqlParameter result = new SqlParameter("@result", System.Data.SqlDbType.Int)
+            {
+                Direction = System.Data.ParameterDirection.Output
+            };
+
+            context.Database.ExecuteSqlCommand("SELECT @result = (NEXT VALUE FOR IntSeq)", result);
+            
+            //(int)result.Value
+            ErrInfLogger.LockInstance.InfoLog(result.Value.ToString());
+
+            newUser.Id = (int)result.Value;
+            newUser.PermissionId = 0;
+            newUser.AuthToken = _jwt.ReturnJWT(System.DateTime.Now, newUser.PermissionId, (int)result.Value);
             newUser.AuthTokenExpiration = System.DateTime.Now;
             newUser.Salt = SaltGenerator.GenerateSalt();
 

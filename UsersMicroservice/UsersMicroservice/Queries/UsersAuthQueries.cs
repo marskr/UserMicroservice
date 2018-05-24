@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using UsersMicroservice.Data;
 using UsersMicroservice.Encryption;
@@ -22,7 +23,13 @@ namespace UsersMicroservice.Queries
             if (Equals(_krypton.DecryptStringAES(specifiedUser.HashPassword, specifiedUser.Salt), password_s))
             {
                 DateTime tokenExpiration = DateTime.Now.AddHours(12);
-                string token_s = _jwt.ReturnJWT(email_s, tokenExpiration);
+
+                int userId_i = (specifiedUser.Id.HasValue) ? specifiedUser.Id.Value : -1;
+
+                if (userId_i == -1) { return null; }
+
+                string token_s = _jwt.ReturnJWT(tokenExpiration, specifiedUser.PermissionId, userId_i);
+
                 specifiedUser.AuthTokenExpiration = tokenExpiration;
                 specifiedUser.AuthToken = token_s;
                 context.SaveChanges();

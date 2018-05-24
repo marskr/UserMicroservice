@@ -9,9 +9,9 @@ namespace UsersMicroservice.JWT
     public class JWTManager
     {
         public readonly string _key = "401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429090fb3" +
-                                     "37591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1";
+                                      "37591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1";
         
-        public string ReturnJWT(string email_s, DateTime expirationDate)
+        public string ReturnJWT(DateTime expirationDate, int permissionId_i, int userId_i)
         {
             // Create Security key  using private key above:
             // not that latest version of JWT using Microsoft namespace instead of System
@@ -27,8 +27,9 @@ namespace UsersMicroservice.JWT
             // Some PayLoad that contain information about the  customer
             JwtPayload payload = new JwtPayload
             {
-                { "userName", email_s},
                 { "expirationDate", expirationDate},
+                { "permissionId", permissionId_i },
+                { "userId", userId_i }
             };
             
             JwtSecurityToken secToken = new JwtSecurityToken(header, payload);

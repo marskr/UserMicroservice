@@ -14,6 +14,7 @@ namespace UsersMicroservice.Data
         {
             modelBuilder.Entity<Users>().ToTable("Users");
             modelBuilder.Entity<Permissions>().ToTable("Permissions");
+            modelBuilder.HasSequence("IntSeq");
         }
     }
 

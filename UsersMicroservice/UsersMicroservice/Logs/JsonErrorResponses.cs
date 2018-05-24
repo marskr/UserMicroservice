@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Net;
-using System.Net.Http;
 
 namespace UsersMicroservice.Logs
 {
@@ -47,7 +46,6 @@ namespace UsersMicroservice.Logs
 
             return o.ToString(); 
         }
-
 
         public static ResponsesContainer Instance
         {
