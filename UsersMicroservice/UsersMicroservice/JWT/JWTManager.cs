@@ -19,7 +19,7 @@ namespace UsersMicroservice.JWT
 
             // Also note that securityKey length should be >256b
             // so you have to make sure that your private key has a proper length
-            SigningCredentials credentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+            SigningCredentials credentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             // Finally create a Token
             JwtHeader header = new JwtHeader(credentials);
