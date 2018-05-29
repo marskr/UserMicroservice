@@ -38,6 +38,6 @@ namespace UsersMicroservice.Models
         public int? Id { get; set; }
 
         [ForeignKey("PermissionId")]
-        public int PermissionId { get; set; }
+        public int? PermissionId { get; set; }
     }
 }

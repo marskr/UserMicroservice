@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Linq;
 using UsersMicroservice.Data;
 using UsersMicroservice.Encryption;
@@ -28,7 +27,9 @@ namespace UsersMicroservice.Queries
 
                 if (userId_i == -1) { return null; }
 
-                string token_s = _jwt.ReturnJWT(tokenExpiration, specifiedUser.PermissionId, userId_i);
+                int permissionId_i = (specifiedUser.PermissionId.HasValue) ? specifiedUser.PermissionId.Value : 0;
+
+                string token_s = _jwt.ReturnJWT(tokenExpiration, permissionId_i, userId_i);
 
                 specifiedUser.AuthTokenExpiration = tokenExpiration;
                 specifiedUser.AuthToken = token_s;
@@ -41,6 +42,7 @@ namespace UsersMicroservice.Queries
         public override Users APIGet(string token_s, AppDbContext context)
         {
             ErrInfLogger.LockInstance.InfoLog("APIGet launched." + _logInfo);
+
             return context.Users.FirstOrDefault(t => t.AuthToken == token_s);
         }
 

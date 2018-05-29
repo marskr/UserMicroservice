@@ -30,6 +30,11 @@ namespace UsersMicroservice.Controllers
                 return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
                                         String.Empty, false, 3, "Invalid user", "User not found in database"));
 
+            specifiedUser.HashPassword = String.Empty;
+            specifiedUser.Salt = String.Empty;
+            specifiedUser.AuthToken = String.Empty;
+            specifiedUser.Id = 0;
+
             string specifiedUser_s = JsonConvert.SerializeObject(specifiedUser, Formatting.Indented);
 
             // need to change response body for USER!!!!

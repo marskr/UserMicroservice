@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Data.SqlClient;
 using System.Linq;
 using UsersMicroservice.Data;
@@ -18,7 +19,8 @@ namespace UsersMicroservice.Queries
         public override Users APIGet(string email_s, AppDbContext context)
         {
             ErrInfLogger.LockInstance.InfoLog("APIGet launched." + _logInfo);
-            return context.Users.FirstOrDefault(t => t.Email == email_s);
+
+            return context.Users.FirstOrDefault(t => t.Email == email_s); ;
         }
 
         public override void APIPost(Users newUser, AppDbContext context)
@@ -37,30 +39,35 @@ namespace UsersMicroservice.Queries
 
             newUser.Id = (int)result.Value;
             newUser.PermissionId = 0;
-            newUser.AuthToken = _jwt.ReturnJWT(System.DateTime.Now, newUser.PermissionId, (int)result.Value);
+            newUser.AuthToken = _jwt.ReturnJWT(System.DateTime.Now, 0, (int)result.Value);
             newUser.AuthTokenExpiration = System.DateTime.Now;
             newUser.Salt = SaltGenerator.GenerateSalt();
 
             // encrypt password 
             newUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, newUser.Salt); 
             context.Users.Add(newUser);
+
             context.SaveChanges();
         }
 
         public override void APIPut(Users updatedUser, Users newUser, AppDbContext context)
         {
             ErrInfLogger.LockInstance.InfoLog("APIPut launched." + _logInfo);
+
             updatedUser.Name = newUser.Name;
             updatedUser.Surname = newUser.Surname;
             updatedUser.PhoneNumber = newUser.PhoneNumber;
             updatedUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, updatedUser.Salt); 
+
             context.SaveChanges();
         }
 
         public override void APIDelete(Users deletedUser, AppDbContext context)
         {
             ErrInfLogger.LockInstance.InfoLog("APIDelete launched." + _logInfo);
+
             context.Users.Remove(deletedUser);
+
             context.SaveChanges();
         }
 
