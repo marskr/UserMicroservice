@@ -42,6 +42,7 @@ namespace UsersMicroservice.Queries
             newUser.AuthToken = _jwt.ReturnJWT(System.DateTime.Now, 0, (int)result.Value);
             newUser.AuthTokenExpiration = System.DateTime.Now;
             newUser.Salt = SaltGenerator.GenerateSalt();
+            newUser.UserAccountStatus = "normal";
 
             // encrypt password 
             newUser.HashPassword = _krypton.EncryptStringAES(newUser.HashPassword, newUser.Salt); 

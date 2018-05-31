@@ -187,7 +187,9 @@ As a result no matter what happens, you should obtain the 200 status code. The r
 * 3 - validation error (provided user not found in database),
 * 4 - exception error (API have threw an exception),
 * 5 - post error (user exists in database),
-* 6 - delete error (user not exists in database).
+* 6 - delete error (user not exists in database),
+* 7 - length error (user exceeded the length limitation on particular field),
+* 8 - forbidden sign error (user passed forbidden sign, in example name can contain only letters). 
 
 **_Message_** - short information about the message,  
 **_Details_** - additional description about the message,  
@@ -202,10 +204,3 @@ As a result no matter what happens, you should obtain the 200 status code. The r
 **_Success_** - true if action were succesfully finished, false if not,  
 **_ErrorContainer_** - contains all fields from Error class.
 
-
-
-
-
-
-
-  

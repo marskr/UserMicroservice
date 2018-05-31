@@ -5,6 +5,7 @@ using UsersMicroservice.Data;
 using UsersMicroservice.Logs;
 using UsersMicroservice.Models;
 using UsersMicroservice.Queries;
+using UsersMicroservice.Security;
 
 namespace UsersMicroservice.Controllers
 {
@@ -48,6 +49,18 @@ namespace UsersMicroservice.Controllers
         [HttpPost("{email_s}/{password_s}", Name = "CreateToken")]
         public IActionResult Post(string email_s, string password_s)
         {
+            if (XSS.CheckIfTooLong(email_s, 30))
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                        String.Empty, false, 7, "Bad email", "The email is too long"));
+
+            if (XSS.CheckIfContains(email_s, XSS.forbiddenList_s))
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                        String.Empty, false, 8, "Bad email", "The email contains forbidden signs"));
+
+            if (XSS.CheckIfTooLong(password_s, 50))
+                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
+                                        String.Empty, false, 7, "Bad password", "The pasword is too long"));
+
             try
             {
                 if (email_s == null || password_s == null)
