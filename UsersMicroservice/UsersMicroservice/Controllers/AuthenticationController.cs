@@ -27,7 +27,7 @@ namespace UsersMicroservice.Controllers
         {
             try
             {
-                Users specifiedUser = _query.APIGet(token_s, _context);
+                Users specifiedUser = _query.APIGetByEmail(token_s, _context);
 
                 if (specifiedUser == null || specifiedUser.AuthTokenExpiration < DateTime.Now)
                 {

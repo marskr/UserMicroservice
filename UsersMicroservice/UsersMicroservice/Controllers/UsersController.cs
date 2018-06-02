@@ -22,20 +22,11 @@ namespace UsersMicroservice.Controllers
             _query = new UserCRUDQueriesFactory();
         }
 
-        // GET api/Users/{email}
-        [HttpGet("{email_s}", Name = "GetSingleUser")]
-        public IActionResult Get(string email_s)
+        // GET api/Users/{id}
+        [HttpGet("{id_i}", Name = "GetSingleUser")]
+        public IActionResult Get(int id_i)
         {
-            if (XSS.CheckIfTooLong(email_s, 30))
-                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
-                                        String.Empty, false, 7, "Bad email", "The email is too long"));
-
-            if (XSS.CheckIfContains(email_s, XSS.forbiddenList_s))
-                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
-                                        String.Empty, false, 8, "Bad email", "The email contains forbidden signs"));
-
-
-            Users specifiedUser = _query.APIGet(email_s, _context);
+            Users specifiedUser = _query.APIGetById(id_i, _context);
             if (specifiedUser == null)
                 return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
                                         String.Empty, false, 3, "Invalid user", "User not found in database"));
@@ -54,9 +45,9 @@ namespace UsersMicroservice.Controllers
 
         // POST api/Users/
         [HttpPost(Name = "CreateUser")]
-        public IActionResult Post(/*[FromBody]*/Users newUser)
+        public IActionResult Post(Users newUser)
         {
-            if (_query.APIGet(newUser.Email, _context) != null)
+            if (_query.APIGetByEmail(newUser.Email, _context) != null)
                 return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
                                         String.Empty, false, 5, "User exists", "User exists in database"));
 
@@ -103,17 +94,9 @@ namespace UsersMicroservice.Controllers
         }
 
         // PUT api/Users/{email}
-        [HttpPut("{email_s}", Name = "UpdateUser")]
-        public IActionResult Put(string email_s, /*[FromBody]*/Users newUser)
+        [HttpPut("{id_i}", Name = "UpdateUser")]
+        public IActionResult Put(int id_i, Users newUser)
         {
-            if (XSS.CheckIfTooLong(email_s, 30))
-                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
-                                        String.Empty, false, 7, "Bad email", "The email is too long"));
-
-            if (XSS.CheckIfContains(email_s, XSS.forbiddenList_s))
-                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
-                                        String.Empty, false, 8, "Bad email", "The email contains forbidden signs"));
-
             if (XSS.CheckIfTooLong(newUser.HashPassword, 50))
                 return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
                                         String.Empty, false, 7, "Bad password", "The password is too long"));
@@ -136,7 +119,7 @@ namespace UsersMicroservice.Controllers
 
             try
             {
-                Users updatedUser = _query.APIGet(email_s, _context);
+                Users updatedUser = _query.APIGetById(id_i, _context);
                 if (updatedUser == null) { return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(
                                                                    HttpStatusCode.OK, String.Empty, false, 3,
                                                                    "Invalid user", "User not found in database"));
@@ -159,20 +142,12 @@ namespace UsersMicroservice.Controllers
         }
 
         // DELETE api/users/{email}
-        [HttpDelete("{email_s}", Name = "DeleteUser")]
-        public IActionResult Delete(string email_s)
+        [HttpDelete("{id_i}", Name = "DeleteUser")]
+        public IActionResult Delete(int id_i)
         {
-            if (XSS.CheckIfTooLong(email_s, 30))
-                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
-                                        String.Empty, false, 7, "Bad email", "The email is too long"));
-
-            if (XSS.CheckIfContains(email_s, XSS.forbiddenList_s))
-                return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(HttpStatusCode.OK,
-                                        String.Empty, false, 8, "Bad email", "The email contains forbidden signs"));
-
             try
             {
-                Users deletedUser = _query.APIGet(email_s, _context);
+                Users deletedUser = _query.APIGetById(id_i, _context);
                 if (deletedUser == null) { return new ObjectResult(ResponsesContainer.Instance.GetResponseContent(
                                                                    HttpStatusCode.OK, String.Empty, false, 6, 
                                                                    "Not exists", "User not exists in database"));

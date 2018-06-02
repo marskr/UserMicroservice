@@ -39,11 +39,16 @@ namespace UsersMicroservice.Queries
             else { return null; }
         }
 
-        public override Users APIGet(string token_s, AppDbContext context)
+        public override Users APIGetByEmail(string token_s, AppDbContext context)
         {
             ErrInfLogger.LockInstance.InfoLog("APIGet launched." + _logInfo);
 
             return context.Users.FirstOrDefault(t => t.AuthToken == token_s);
+        }
+
+        public override Users APIGetById(int id_i, AppDbContext context)
+        {
+            throw new System.NotImplementedException();
         }
 
         public override void APIDelete(Users deletedUser, AppDbContext context)

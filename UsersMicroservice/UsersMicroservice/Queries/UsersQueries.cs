@@ -16,11 +16,18 @@ namespace UsersMicroservice.Queries
         JWTManager _jwt = new JWTManager();
         private readonly string _logInfo = "[Queries]";
 
-        public override Users APIGet(string email_s, AppDbContext context)
+        public override Users APIGetByEmail(string email_s, AppDbContext context)
         {
             ErrInfLogger.LockInstance.InfoLog("APIGet launched." + _logInfo);
 
             return context.Users.FirstOrDefault(t => t.Email == email_s); ;
+        }
+
+        public override Users APIGetById(int id_i, AppDbContext context)
+        {
+            ErrInfLogger.LockInstance.InfoLog("APIGet launched." + _logInfo);
+
+            return context.Users.FirstOrDefault(t => t.Id == id_i); ;
         }
 
         public override void APIPost(Users newUser, AppDbContext context)
