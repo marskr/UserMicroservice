@@ -93,7 +93,7 @@ namespace UsersMicroservice.Controllers
                                     String.Empty, true, 0, "Created", "User created in database"));
         }
 
-        // PUT api/Users/{email}
+        // PUT api/Users/{id}
         [HttpPut("{id_i}", Name = "UpdateUser")]
         public IActionResult Put(int id_i, Users newUser)
         {
@@ -141,7 +141,7 @@ namespace UsersMicroservice.Controllers
                                     String.Empty, true, 0, "Updated", "User updated in database"));
         }
 
-        // DELETE api/users/{email}
+        // DELETE api/users/{id}
         [HttpDelete("{id_i}", Name = "DeleteUser")]
         public IActionResult Delete(int id_i)
         {
